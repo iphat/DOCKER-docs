@@ -15,8 +15,8 @@ These all are the steps for running a docker file -
 
 # This step brings - /src , server.js , dockerfile
 # This only step runs again and again left others are saved in cache becz they do not run over again and again
-COPY . .
 
+    COPY . .
     CMD ["node", "server.js"]
 
 
@@ -102,12 +102,7 @@ docker-compose.yml-
        ports:
            - "8080:9000"
        volumes:
-           - ./Backend:/app
-           - backend_node_modules:/app/node_modules
-        command: npx nodemon -L server.js
-
-     volumes:
-        backend_node_modules:  
+           - ./Backend:.
 
 what the above code do -
 
@@ -138,7 +133,23 @@ now change the code of Dockerfile to this -
      COPY . /app
      CMD ["node", "server.js"]
 
-what the code is doing undestand it -
+  and docker-compose.yml to this -
+  
+     services:
+     backend: 
+        build: ./Backend 
+         ports:
+             - "8080:9000"
+        volumes:
+              - ./Backend:/app
+              - backend_node_modules:/app/node_modules
+        command: npx nodemon -L server.js     
+
+
+      volumes:
+          backend_node_modules:
+
+what the code is doing in Dockerfile undestand it -
 
   WORKDIR /app → Create and switch to the /app folder inside the container (like cd /app)
 
