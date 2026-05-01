@@ -5,19 +5,19 @@ These all are the steps for running a docker file -
 => check the basic code on "Dockerfile"  -
 
 # this step brings node and OS together, this step is always same
-FROM node:20-alpine
+    FROM node:20-alpine
 
 # here last dot (.) means image, it means "copy package.json in image"
-COPY ./package.json .
-COPY ./package-lock.json .
+     COPY ./package.json .
+     COPY ./package-lock.json .
 
-RUN npm install
+     RUN npm install
 
 # This step brings - /src , server.js , dockerfile
 # This only step runs again and again left others are saved in cache becz they do not run over again and again
 COPY . .
 
-CMD ["node", "server.js"]
+    CMD ["node", "server.js"]
 
 
 
@@ -31,8 +31,9 @@ Phase1 -
 
 Phase2 - 
      convert the image into container 
-
-     run command -  docker run express_server(This is an image name)
+     express_server(This is an image name)
+     
+      run command -  docker run express_server
 
 
 => After second phase server run on container's port no 9000 of docker that is why it can't run on browser or we can't access it from your system.
@@ -47,14 +48,16 @@ To access the port outside the container "port mapping" is performed this is how
                                    8080 = random number (or use 9000)
                                    9000 = current port 
                                    express_server = name 
-
     => after this command server runs on your system's browser but now on the port 8080                               
 
 
 => check node version - 
+
      node --version -> v22.16.0
 => now check the node version running on dockers container   
-     docker exec -it 7338a4ab2(current container id) node --version -> v20.20.2
+      7338a4ab2 - (replace this current container id)
+      
+     docker exec -it 7338a4ab2 node --version -> v20.20.2
 
 
  both versions are different 
@@ -92,14 +95,19 @@ step1 -
 
 docker-compose.yml-
 
-services:
- backend: 
-   build: ./Backend 
-   ports:
-       - "8080:9000"
-   volumes:
-        - ./Backend:.
+    services:
+    
+      backend: 
+       build: ./Backend 
+       ports:
+           - "8080:9000"
+       volumes:
+           - ./Backend:/app
+           - backend_node_modules:/app/node_modules
+        command: npx nodemon -L server.js
 
+     volumes:
+        backend_node_modules:  
 
 what the above code do -
 
@@ -119,16 +127,16 @@ step2-
 step3 -
 now change the code of Dockerfile to this -
 
-FROM node:20-alpine
+    FROM node:20-alpine
 
-WORKDIR /app
+     WORKDIR /app
 
-COPY ./package.json /app
-COPY ./package-lock.json /app
+     COPY ./package.json /app
+     COPY ./package-lock.json /app
 
-RUN npm install
-COPY . /app
-CMD ["node", "server.js"]
+     RUN npm install
+     COPY . /app
+     CMD ["node", "server.js"]
 
 what the code is doing undestand it -
 
